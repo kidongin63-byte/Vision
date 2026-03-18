@@ -35,12 +35,13 @@ class VideoProcessor(VideoTransformerBase):
         self.mode = "Face"
         self.selected_part = "None"
         
-        # MediaPipe 초기화
-        self.mp_hands = mp.solutions.hands.Hands(max_num_hands=1)
-        self.mp_draw = mp.solutions.drawing_utils
-        
-        # Face Landmarker는 transform 내부에서 초기화하거나 전역으로 관리 (웹 세션 고려)
-        self.face_landmarker = None 
+        # mp.solutions.hands.Hands 대신 직접 임포트한 mp_hands 사용
+        self.mp_hands = mp_hands.Hands(
+            static_image_mode=False, 
+            max_num_hands=1, 
+            min_detection_confidence=0.5
+        )
+        self.mp_draw = mp_draw
 
     def draw_text(self, img, text, pos, size, color):
         img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
