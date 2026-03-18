@@ -2,6 +2,8 @@ import streamlit as st
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, RTCConfiguration
 import cv2
 import mediapipe as mp
+from mediapipe.solutions import hands as mp_hands
+from mediapipe.solutions import drawing_utils as mp_draw
 import numpy as np
 from deepface import DeepFace
 from PIL import ImageFont, ImageDraw, Image
