@@ -2,14 +2,8 @@ import streamlit as st
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, RTCConfiguration
 import cv2
 import mediapipe as mp
-# 경로가 꼬였을 때를 대비한 3단계 방어적 임포트
-try:
-    from mediapipe.solutions import hands as mp_hands
-    from mediapipe.solutions import drawing_utils as mp_draw
-except ImportError:
-        import mediapipe.python.solutions.hands as mp_hands
-        import mediapipe.python.solutions.drawing_utils as mp_draw
-import numpy as np
+from mediapipe.tasks import python as mp_python
+from mediapipe.tasks.python import vision
 from deepface import DeepFace
 from PIL import ImageFont, ImageDraw, Image
 import os
@@ -37,41 +31,23 @@ emotion_ko = {
 # --- AI 엔진 클래스 ---
 class VideoProcessor(VideoTransformerBase):
     def __init__(self):
-        self.mp_hands_obj = mp_hands.Hands(
-            static_image_mode=False, 
-            max_num_hands=1, 
-            min_detection_confidence=0.5
-        )
-        self.mp_draw_obj = mp_draw
-
-    def draw_text(self, img, text, pos, size, color):
-        img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-        draw = ImageDraw.Draw(img_pil)
-        draw.text(pos, text, font=get_font(size), fill=color)
-        return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+        # 1. Hands(solutions) 대신 HandLandmarker(tasks) 사용 준비
+        # 단, 실시간 처리를 위해 여기서는 최소한의 설정만 합니다.
+        self.model_path = 'hand_landmarker.task' # 이 파일이 저장소에 있어야 합니다.
+        
+        # 만약 .task 파일이 없다면 우선 빈 값으로 둡니다.
+        self.hand_landmarker = None 
 
     def transform(self, frame):
         img = frame.to_ndarray(format="bgr24")
         img = cv2.flip(img, 1)
-        h, w, _ = img.shape
-
-        # [참고] 실시간 DeepFace 분석은 서버 사양에 따라 매우 느릴 수 있으므로 
-        # 여기서는 MediaPipe 기반 관상/수상 가이드라인 위주로 먼저 구현합니다.
         
-        if st.session_state.get('mode') == "Face":
-            # 관상 분석 로직 (MediaPipe)
-            img = self.draw_text(img, "관상학 모드 활성화 중", (20, 20), 20, (0, 255, 0))
-            # 여기에 기존의 get_physiognomy_analysis 로직 이식 가능
-        else:
-            # 수상 분석 로직 (MediaPipe)
-            rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            res = self.mp_hands.process(rgb)
-            if res.multi_hand_landmarks:
-                for hl in res.multi_hand_landmarks:
-                    self.mp_draw.draw_landmarks(img, hl, mp.solutions.hands.HAND_CONNECTIONS)
-                    img = self.draw_text(img, "손 인식됨: 분석 중...", (20, h-50), 20, (255, 255, 255))
-
+        # [임시 조치] solutions 에러를 피하기 위해 
+        # 일단은 화면만 출력하고, 에러가 나지 않는지 확인합니다.
+        # 나중에 여기에 최신 Tasks API 로직을 추가할 예정입니다.
+        
         return img
+
 
 # --- UI 레이아웃 ---
 col1, col2 = st.columns([3, 1])
