@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
-from mediapipe.solutions import drawing_utils as mp_draw
-from mediapipe.solutions import hands as mp_hands
+from mediapipe.python.solutions import drawing_utils as mp_draw
+from mediapipe.python.solutions import hands as mp_hands
 import numpy as np
 import threading
 from deepface import DeepFace
