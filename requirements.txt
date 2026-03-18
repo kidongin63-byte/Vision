@@ -1,6 +1,7 @@
 streamlit
-mediapipe==0.10.11
+streamlit-webrtc
+mediapipe==0.10.31
 deepface
 tf-keras
-opencv-python-headless
 numpy==1.26.4
+Pillow
