@@ -8,9 +8,6 @@ from deepface import DeepFace
 from PIL import ImageFont, ImageDraw, Image
 import os
 
-# 1. MediaPipe 초기화 (부위별 유틸리티 - 명시적 임포트)
-mp_draw = mp.solutions.drawing_utils
-mp_hands = mp.solutions.hands
 
 # 1. MediaPipe Tasks 초기화
 model_path = 'face_landmarker.task'
