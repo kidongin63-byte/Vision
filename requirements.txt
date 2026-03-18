@@ -1,7 +1,6 @@
 streamlit
-mediapipe==0.10.9
-deepface==0.0.92
-tf-keras==2.16.0
-tensorflow==2.16.1
-numpy==1.26.4
+mediapipe==0.10.11
+deepface
+tf-keras
 opencv-python-headless
+numpy==1.26.4
