@@ -1,3 +1,4 @@
 streamlit
 deepface
 mediapipe
+tr-keras
