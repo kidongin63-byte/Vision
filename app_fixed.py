@@ -63,12 +63,17 @@ with col2:
 with col1:
     # WebRTC 스트리머 실행
     ctx = webrtc_streamer(
-        key="visionwell",
-        video_processor_factory=VideoProcessor,
-        rtc_configuration={
-            "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
-        },
-        media_stream_constraints={"video": True, "audio": False},
-    )
+    key="visionwell",
+    video_processor_factory=VideoProcessor,
+    rtc_configuration={
+        "iceServers": [
+            {"urls": ["stun:stun.l.google.com:19302"]},
+            {"urls": ["stun:stun1.l.google.com:19302"]},
+            {"urls": ["stun:stun2.l.google.com:19302"]},
+        ]
+    },
+    media_stream_constraints={"video": True, "audio": False},
+    async_processing=True, # 비동기 처리 활성화로 에러 방지
+)
 
 st.warning("[주의] 본 결과는 참고용이며 의료적 판단을 대체할 수 없습니다.")
