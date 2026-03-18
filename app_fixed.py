@@ -7,13 +7,8 @@ try:
     from mediapipe.solutions import hands as mp_hands
     from mediapipe.solutions import drawing_utils as mp_draw
 except ImportError:
-    try:
         import mediapipe.python.solutions.hands as mp_hands
         import mediapipe.python.solutions.drawing_utils as mp_draw
-    except ImportError:
-        # 최후의 수단: 직접 객체 참조
-        mp_hands = mp.solutions.hands
-        mp_draw = mp.solutions.drawing_utils
 import numpy as np
 from deepface import DeepFace
 from PIL import ImageFont, ImageDraw, Image
