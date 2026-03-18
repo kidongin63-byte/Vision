@@ -1,5 +1,6 @@
 streamlit
 deepface
 mediapipe
+mediapipe.solutions
 tf-keras
 
