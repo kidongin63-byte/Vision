@@ -2,8 +2,18 @@ import streamlit as st
 from streamlit_webrtc import webrtc_streamer, VideoTransformerBase, RTCConfiguration
 import cv2
 import mediapipe as mp
-from mediapipe.solutions import hands as mp_hands
-from mediapipe.solutions import drawing_utils as mp_draw
+# 경로가 꼬였을 때를 대비한 3단계 방어적 임포트
+try:
+    from mediapipe.solutions import hands as mp_hands
+    from mediapipe.solutions import drawing_utils as mp_draw
+except ImportError:
+    try:
+        import mediapipe.python.solutions.hands as mp_hands
+        import mediapipe.python.solutions.drawing_utils as mp_draw
+    except ImportError:
+        # 최후의 수단: 직접 객체 참조
+        mp_hands = mp.solutions.hands
+        mp_draw = mp.solutions.drawing_utils
 import numpy as np
 from deepface import DeepFace
 from PIL import ImageFont, ImageDraw, Image
@@ -32,16 +42,12 @@ emotion_ko = {
 # --- AI 엔진 클래스 ---
 class VideoProcessor(VideoTransformerBase):
     def __init__(self):
-        self.mode = "Face"
-        self.selected_part = "None"
-        
-        # mp.solutions.hands.Hands 대신 직접 임포트한 mp_hands 사용
-        self.mp_hands = mp_hands.Hands(
+        self.mp_hands_obj = mp_hands.Hands(
             static_image_mode=False, 
             max_num_hands=1, 
             min_detection_confidence=0.5
         )
-        self.mp_draw = mp_draw
+        self.mp_draw_obj = mp_draw
 
     def draw_text(self, img, text, pos, size, color):
         img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
