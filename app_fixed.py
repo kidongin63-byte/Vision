@@ -6,6 +6,8 @@ from mediapipe.tasks import python as mp_python
 from mediapipe.tasks.python import vision
 from deepface import DeepFace
 from PIL import ImageFont, ImageDraw, Image
+import av
+from av import VideoFrame
 import os
 
 # --- 설정 및 초기화 ---
