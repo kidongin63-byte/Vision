@@ -29,24 +29,23 @@ emotion_ko = {
 }
 
 # --- AI 엔진 클래스 ---
-class VideoProcessor(VideoTransformerBase):
+class VideoProcessor(VideoProcessorBase):
     def __init__(self):
-        # 1. Hands(solutions) 대신 HandLandmarker(tasks) 사용 준비
-        # 단, 실시간 처리를 위해 여기서는 최소한의 설정만 합니다.
-        self.model_path = 'hand_landmarker.task' # 이 파일이 저장소에 있어야 합니다.
-        
-        # 만약 .task 파일이 없다면 우선 빈 값으로 둡니다.
-        self.hand_landmarker = None 
+        # MediaPipe 등의 초기화 로직을 여기에 넣으세요.
+        self.mode = "Face"
 
-    def transform(self, frame):
+    def recv(self, frame: VideoFrame) -> VideoFrame:
+        # 1. 프레임을 numpy 배열(BGR)로 변환
         img = frame.to_ndarray(format="bgr24")
         img = cv2.flip(img, 1)
-        
-        # [임시 조치] solutions 에러를 피하기 위해 
-        # 일단은 화면만 출력하고, 에러가 나지 않는지 확인합니다.
-        # 나중에 여기에 최신 Tasks API 로직을 추가할 예정입니다.
-        
-        return img
+
+        # --------------------------------------------------
+        # [여기에 기존의 관상/수상 분석 로직을 넣으세요]
+        # 예: cv2.putText(img, "AI Analyzing...", (50, 50), ...)
+        # --------------------------------------------------
+
+        # 2. 처리된 numpy 배열을 다시 VideoFrame 객체로 변환하여 반환
+        return VideoFrame.from_ndarray(img, format="bgr24")
 
 
 # --- UI 레이아웃 ---
@@ -66,14 +65,11 @@ with col1:
     key="visionwell",
     video_processor_factory=VideoProcessor,
     rtc_configuration={
-        "iceServers": [
-            {"urls": ["stun:stun.l.google.com:19302"]},
-            {"urls": ["stun:stun1.l.google.com:19302"]},
-            {"urls": ["stun:stun2.l.google.com:19302"]},
-        ]
+        "iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]
     },
     media_stream_constraints={"video": True, "audio": False},
-    async_processing=True, # 비동기 처리 활성화로 에러 방지
-)
+    # recv 방식에서는 아래 설정이 성능 향상에 도움을 줍니다.
+    async_processing=True,
+    )
 
 st.warning("[주의] 본 결과는 참고용이며 의료적 판단을 대체할 수 없습니다.")
