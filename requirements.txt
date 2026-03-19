@@ -4,3 +4,4 @@ numpy
 deepface
 Pillow
 tf-keras
+streamlit
