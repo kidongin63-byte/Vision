@@ -29,4 +29,3 @@ htmlcov/
 .mypy_cache/
 .tox/
 .DS_Store
-*.task
