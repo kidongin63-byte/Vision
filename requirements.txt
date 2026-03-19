@@ -5,3 +5,4 @@ deepface
 Pillow
 tf-keras
 streamlit
+streamlit-image-coordinates
